@@ -1,5 +1,7 @@
-import type { Settings } from "../models/settings";
-
+interface Settings {
+  units: "metric" | "imperial";
+  theme: "light" | "dark";
+}
 export class SettingsService {
   private key = "weather:settings";
 

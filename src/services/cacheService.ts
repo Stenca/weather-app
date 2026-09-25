@@ -1,5 +1,7 @@
-import type { CacheEntry } from "../models/cache";
-
+interface CacheEntry<T> {
+  value: T;
+  expires: number;
+}
 export class CacheService<T> {
   private cache = new Map<string, CacheEntry<T>>();
   private ttlMs: number;
