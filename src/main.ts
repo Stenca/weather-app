@@ -1,16 +1,28 @@
 import "./style.css";
 import { renderCurrent } from "./components/renderCurrent";
-import type { Weather } from "./models/weather";
+import type { City, Weather } from "./models/weather";
 import { renderSearch } from "./components/renderSearch";
 import { WeatherService } from "./services/weatherService";
 import { SettingsService } from "./services/settingsService";
 import { renderLoading } from "./components/renderLoading";
 import { renderError } from "./components/renderError";
+import { getErrorMessage } from "./utils/errors";
+import { StorageService } from "./services/storageService";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
 const weatherService = new WeatherService();
 const settingsService = new SettingsService();
+const storageService = new StorageService();
+
+const DEFAULT_CITY: City = {
+  id: 0,
+  name: "Paris",
+  latitude: 48.8566,
+  longitude: 2.3522,
+  country: "France",
+};
+const initialCity = storageService.loadCity() ?? DEFAULT_CITY;
 
 let settings = settingsService.load();
 let weather: Weather | null = null;
@@ -27,6 +39,20 @@ function render(): void {
   `;
 }
 
+async function loadWeather(city: City): Promise<void> {
+  loading = true;
+  error = null;
+  render();
+  try {
+    weather = await weatherService.getWeather(city);
+  } catch (err) {
+    error = getErrorMessage(err);
+  } finally {
+    loading = false;
+    render();
+  }
+}
+
 async function handleSearch(query: string): Promise<void> {
   searchQuery = query;
   loading = true;
@@ -40,10 +66,11 @@ async function handleSearch(query: string): Promise<void> {
       error = `No city found for "${query}"`;
       return;
     }
-    weather = await weatherService.getWeather(cities[0]);
+
+    storageService.saveCity(cities[0]);
+    await loadWeather(cities[0]);
   } catch (err) {
-    error = err instanceof Error ? err.message : "Something went wrong";
-  } finally {
+    error = getErrorMessage(err);
     loading = false;
     render();
   }
@@ -74,4 +101,4 @@ function setupEventListeners() {
 }
 
 setupEventListeners();
-render();
+loadWeather(initialCity);
