@@ -2,8 +2,9 @@ import type { Units } from "../models/settings";
 import type { Weather } from "../models/weather";
 import { formatDate, formatDay } from "../utils/date";
 import { escapeHtml } from "../utils/dom";
-import { formatTemp, formatWind } from "../utils/units";
+import { kmhToMph } from "../utils/units";
 import { describeWeather } from "../utils/weatherCodes";
+import { renderTemp } from "./renderTemp";
 
 export function renderCurrent(weather: Weather, units: Units): string {
   const { current, daily, city } = weather;
@@ -16,14 +17,14 @@ export function renderCurrent(weather: Weather, units: Units): string {
         <div class="current-city">
             ${escapeHtml(city.name)}, ${escapeHtml(city.country)}
         </div>
-        <div class="current-temp">${formatTemp(current.temperature, units)}</div>
+        <div class="current-temp">${renderTemp(current.temperature, units)}</div>
         <div class="current-day">${formatDay(current.time)}</div>
         <div class="current-date">${formatDate(current.time)}</div>
         <div class="current-label">${info.label}</div>
         <div class="current-details">
         <div class="detail">
           <span class="detail-label">Feels like</span>
-          <span class="detail-value">${formatTemp(current.apparentTemperature, units)}</span>
+          <span class="detail-value">${renderTemp(current.apparentTemperature, units)}</span>
         </div>
         <div class="detail">
           <span class="detail-label">Humidity</span>
@@ -31,7 +32,10 @@ export function renderCurrent(weather: Weather, units: Units): string {
         </div>
         <div class="detail">
           <span class="detail-label">Wind</span>
-          <span class="detail-value">${formatWind(current.windSpeed, units)}</span>
+            <span class="detail-value">
+                ${Math.round(units === "metric" ? current.windSpeed : kmhToMph(current.windSpeed))}
+                ${units === "metric" ? "km/h" : "mph"}
+            </span>
         </div>
         <div class="detail">
           <span class="detail-label">Clouds</span>
