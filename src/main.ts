@@ -60,20 +60,24 @@ async function handleSearch(query: string): Promise<void> {
   weather = null;
   render();
 
+  let cities: City[];
   try {
-    const cities = await weatherService.searchCities(query);
-    if (cities.length === 0) {
-      error = `No city found for "${query}"`;
-      return;
-    }
-
-    storageService.saveCity(cities[0]);
-    await loadWeather(cities[0]);
+    cities = await weatherService.searchCities(query);
   } catch (err) {
     error = getErrorMessage(err);
     loading = false;
     render();
+    return;
   }
+
+  if (cities.length === 0) {
+    error = `No city found for "${query}"`;
+    loading = false;
+    render();
+    return;
+  }
+  storageService.saveCity(cities[0]);
+  await loadWeather(cities[0]);
 }
 
 function handleSubmit(e: Event): void {

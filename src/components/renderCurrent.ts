@@ -13,7 +13,9 @@ export function renderCurrent(weather: Weather, units: Units): string {
   return `
     <div class="current-card glass">
         <div class="current-icon">${info.icon}</div>
-        <div class="current-city">${escapeHtml(city.name)}</div>
+        <div class="current-city">
+            ${escapeHtml(city.name)}, ${escapeHtml(city.country)}
+        </div>
         <div class="current-temp">${formatTemp(current.temperature, units)}</div>
         <div class="current-day">${formatDay(current.time)}</div>
         <div class="current-date">${formatDate(current.time)}</div>
