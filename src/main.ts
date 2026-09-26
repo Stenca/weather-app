@@ -8,6 +8,7 @@ import { renderLoading } from "./components/renderLoading";
 import { renderError } from "./components/renderError";
 import { getErrorMessage } from "./utils/errors";
 import { StorageService } from "./services/storageService";
+import { LoadingController } from "./utils/loading";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
@@ -23,6 +24,11 @@ const DEFAULT_CITY: City = {
   country: "France",
 };
 const initialCity = storageService.loadCity() ?? DEFAULT_CITY;
+
+const loadingController = new LoadingController((value) => {
+  loading = value;
+  render();
+});
 
 let settings = settingsService.load();
 let weather: Weather | null = null;
@@ -40,7 +46,7 @@ function render(): void {
 }
 
 async function loadWeather(city: City): Promise<void> {
-  loading = true;
+  loadingController.begin();
   error = null;
   render();
   try {
@@ -48,14 +54,13 @@ async function loadWeather(city: City): Promise<void> {
   } catch (err) {
     error = getErrorMessage(err);
   } finally {
-    loading = false;
-    render();
+    loadingController.end();
   }
 }
 
 async function handleSearch(query: string): Promise<void> {
   searchQuery = query;
-  loading = true;
+  loadingController.begin();
   error = null;
   weather = null;
   render();
@@ -65,14 +70,14 @@ async function handleSearch(query: string): Promise<void> {
     cities = await weatherService.searchCities(query);
   } catch (err) {
     error = getErrorMessage(err);
-    loading = false;
+    loadingController.end();
     render();
     return;
   }
 
   if (cities.length === 0) {
     error = `No city found for "${query}"`;
-    loading = false;
+    loadingController.end();
     render();
     return;
   }
