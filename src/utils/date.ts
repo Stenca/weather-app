@@ -3,14 +3,14 @@ export function formatDay(date: Date): string {
 }
 
 export function formatShortDate(date: Date): string {
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("en-GB", {
     month: "short",
     day: "numeric",
   }).format(date);
 }
 
 export function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("en", {
+  return new Intl.DateTimeFormat("en-GB", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
