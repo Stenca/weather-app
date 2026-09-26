@@ -114,6 +114,34 @@ body {
   max-width: 20rem;
   width: 100%;
   align-self: center;
+  position: relative;
+}
+
+.unit-toggle {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    color 0.2s;
+}
+
+.unit-toggle:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+}
+
+.unit-toggle:active {
+  transform: scale(0.95);
 }
 
 .current-icon {
@@ -136,6 +164,25 @@ body {
   font-weight: 300;
   letter-spacing: -0.03em;
   line-height: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.temp {
+  display: inline-flex;
+  align-items: flex-start;
+}
+
+.temp-value {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.temp-unit {
+  font-size: 0.35em;
+  font-weight: 400;
+  margin-top: 0.2em;
+  margin-left: 0.05em;
 }
 
 .current-day {

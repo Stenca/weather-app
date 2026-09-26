@@ -12,6 +12,10 @@ export function renderCurrent(weather: Weather, units: Units): string {
 
   return `
     <div class="current-card glass">
+        <button
+            class="unit-toggle"
+            data-action="toggle-units"
+        >${units === "metric" ? "°C" : "°F"}</button>
         <div class="current-icon">${info.icon}</div>
         <div class="current-city">
             ${escapeHtml(city.name)}, ${escapeHtml(city.country)}

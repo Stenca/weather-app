@@ -101,7 +101,16 @@ function handleClick(e: Event): void {
   if (!actionEl) return;
 
   switch (actionEl.dataset.action) {
+    case "toggle-units":
+      handleToggleUnits();
+      break;
   }
+}
+
+function handleToggleUnits(): void {
+  const next = settings.units === "metric" ? "imperial" : "metric";
+  settings = settingsService.update({ units: next });
+  render();
 }
 
 function setupEventListeners() {
