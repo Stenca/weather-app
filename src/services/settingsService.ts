@@ -1,7 +1,5 @@
-interface Settings {
-  units: "metric" | "imperial";
-  theme: "light" | "dark";
-}
+import type { Settings } from "../models/settings";
+
 export class SettingsService {
   private key = "weather:settings";
 
@@ -13,10 +11,11 @@ export class SettingsService {
   load(): Settings {
     const saved = localStorage.getItem(this.key);
     if (!saved) return { ...this.defaults };
+
     try {
       return { ...this.defaults, ...JSON.parse(saved) };
     } catch {
-      return this.defaults;
+      return { ...this.defaults };
     }
   }
 
