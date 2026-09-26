@@ -20,7 +20,7 @@ export class WeatherService {
   }
 
   async getWeather(city: City, force = false): Promise<Weather> {
-    const key = `${city.latitude}, ${city.longitude}`;
+    const key = `${city.latitude},${city.longitude}`;
 
     if (!force) {
       const cached = this.forecastCache.get(key);
@@ -59,8 +59,28 @@ export class WeatherService {
     const params = new URLSearchParams({
       latitude: String(city.latitude),
       longitude: String(city.longitude),
-      current: "temperature_2m, weather_code, wind_speed_10m",
-      daily: "weather_code,temperature_2m_max,temperature_2m_min",
+      current: [
+        "temperature_2m",
+        "apparent_temperature",
+        "weather_code",
+        "wind_speed_10m",
+        "wind_direction_10m",
+        "relative_humidity_2m",
+        "precipitation",
+        "cloud_cover",
+        "is_day",
+      ].join(","),
+      daily: [
+        "weather_code",
+        "temperature_2m_max",
+        "temperature_2m_min",
+        "precipitation_probability_max",
+        "precipitation_sum",
+        "wind_speed_10m_max",
+        "uv_index_max",
+        "sunrise",
+        "sunset",
+      ].join(","),
       timezone: "auto",
       forecast_days: "7",
     });
@@ -71,11 +91,17 @@ export class WeatherService {
     const data = await res.json();
 
     const daily: DailyForecast[] = data.daily.time.map(
-      (date: string, i: number) => ({
+      (date: string, i: number): DailyForecast => ({
         date: new Date(date),
         weatherCode: data.daily.weather_code[i],
         tempMax: data.daily.temperature_2m_max[i],
         tempMin: data.daily.temperature_2m_min[i],
+        precipitationProbability: data.daily.precipitation_probability_max[i],
+        precipitationSum: data.daily.precipitation_sum[i],
+        windSpeedMax: data.daily.wind_speed_10m_max[i],
+        uvIndexMax: data.daily.uv_index_max[i],
+        sunrise: new Date(data.daily.sunrise[i]),
+        sunset: new Date(data.daily.sunset[i]),
       }),
     );
 
@@ -84,8 +110,14 @@ export class WeatherService {
       current: {
         time: new Date(data.current.time),
         temperature: data.current.temperature_2m,
+        apparentTemperature: data.current.apparent_temperature,
         weatherCode: data.current.weather_code,
         windSpeed: data.current.wind_speed_10m,
+        windDirection: data.current.wind_direction_10m,
+        humidity: data.current.relative_humidity_2m,
+        precipitation: data.current.precipitation,
+        cloudCover: data.current.cloud_cover,
+        isDay: data.current.is_day === 1,
       },
       daily,
     };

@@ -14,6 +14,33 @@ describe("WeatherService", () => {
     country: "France",
   };
 
+  const forecastResponse = {
+    current: {
+      time: "2026-09-25T14:00",
+      temperature_2m: 18.3,
+      apparent_temperature: 16.1,
+      weather_code: 3,
+      wind_speed_10m: 12.4,
+      wind_direction_10m: 220,
+      relative_humidity_2m: 72,
+      precipitation: 0.2,
+      cloud_cover: 80,
+      is_day: 1,
+    },
+    daily: {
+      time: ["2026-09-25", "2026-09-26"],
+      weather_code: [3, 61],
+      temperature_2m_max: [19.1, 17.4],
+      temperature_2m_min: [11.2, 10.8],
+      precipitation_probability_max: [10, 60],
+      precipitation_sum: [0, 5.2],
+      wind_speed_10m_max: [15.3, 22.1],
+      uv_index_max: [4, 2],
+      sunrise: ["2026-09-25T07:24", "2026-09-26T07:25"],
+      sunset: ["2026-09-25T19:12", "2026-09-26T19:10"],
+    },
+  };
+
   beforeEach(() => {
     service = new WeatherService();
     fetchMock = vi.fn();
@@ -119,22 +146,7 @@ describe("WeatherService", () => {
   });
 
   describe("getWeather", () => {
-    const forecastResponse = {
-      current: {
-        time: "2026-09-25T14:00",
-        temperature_2m: 18.3,
-        weather_code: 3,
-        wind_speed_10m: 12.4,
-      },
-      daily: {
-        time: ["2026-09-25", "2026-09-26"],
-        weather_code: [3, 61],
-        temperature_2m_max: [19.1, 17.4],
-        temperature_2m_min: [11.2, 10.8],
-      },
-    };
-
-    it("maps the API response to the Weather model", async () => {
+    it("maps the full API response to the Weather model", async () => {
       fetchMock.mockResolvedValueOnce({
         ok: true,
         json: async () => forecastResponse,
@@ -143,14 +155,34 @@ describe("WeatherService", () => {
       const weather = await service.getWeather(paris);
 
       expect(weather.city).toEqual(paris);
+
+      // current
+      expect(weather.current.time).toBeInstanceOf(Date);
       expect(weather.current.temperature).toBe(18.3);
+      expect(weather.current.apparentTemperature).toBe(16.1);
       expect(weather.current.weatherCode).toBe(3);
       expect(weather.current.windSpeed).toBe(12.4);
-      expect(weather.current.time).toBeInstanceOf(Date);
+      expect(weather.current.windDirection).toBe(220);
+      expect(weather.current.humidity).toBe(72);
+      expect(weather.current.precipitation).toBe(0.2);
+      expect(weather.current.cloudCover).toBe(80);
+      expect(weather.current.isDay).toBe(true);
+
+      // daily
       expect(weather.daily).toHaveLength(2);
-      expect(weather.daily[0].tempMax).toBe(19.1);
-      expect(weather.daily[1].weatherCode).toBe(61);
       expect(weather.daily[0].date).toBeInstanceOf(Date);
+      expect(weather.daily[0].weatherCode).toBe(3);
+      expect(weather.daily[0].tempMax).toBe(19.1);
+      expect(weather.daily[0].tempMin).toBe(11.2);
+      expect(weather.daily[0].precipitationProbability).toBe(10);
+      expect(weather.daily[0].precipitationSum).toBe(0);
+      expect(weather.daily[0].windSpeedMax).toBe(15.3);
+      expect(weather.daily[0].uvIndexMax).toBe(4);
+      expect(weather.daily[0].sunrise).toBeInstanceOf(Date);
+      expect(weather.daily[0].sunset).toBeInstanceOf(Date);
+
+      expect(weather.daily[1].weatherCode).toBe(61);
+      expect(weather.daily[1].precipitationProbability).toBe(60);
     });
 
     it("throws on a failed response", async () => {
@@ -180,7 +212,6 @@ describe("WeatherService", () => {
       const parisTX: City = {
         ...paris,
         id: 2,
-        name: "Paris",
         latitude: 33.66,
         longitude: -95.55,
       };
