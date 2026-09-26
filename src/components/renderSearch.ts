@@ -7,7 +7,7 @@ export function renderSearch(query = ""): string {
                 type="search"
                 class="search-input"
                 name="query"
-                placeholder="Search a city"
+                placeholder="Search a city..."
                 value="${escapeHtml(query)}"
                 autocomplete="off"
                 required
