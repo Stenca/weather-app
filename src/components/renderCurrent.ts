@@ -7,9 +7,8 @@ import { describeWeather } from "../utils/weatherCodes";
 import { renderTemp } from "./renderTemp";
 
 export function renderCurrent(weather: Weather, units: Units): string {
-  const { current, daily, city } = weather;
+  const { current, city } = weather;
   const info = describeWeather(current.weatherCode);
-  const today = daily[0];
 
   return `
     <div class="current-card glass">
