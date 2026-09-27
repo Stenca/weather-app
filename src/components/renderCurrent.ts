@@ -11,7 +11,7 @@ export function renderCurrent(weather: Weather, units: Units): string {
   const info = describeWeather(current.weatherCode);
 
   return `
-    <div class="current-card glass">
+    <div class="current-card glass" data-action="toggle-details">
         <button
             class="unit-toggle"
             data-action="toggle-units"

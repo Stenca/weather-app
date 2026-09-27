@@ -10,6 +10,7 @@ import { getErrorMessage } from "./utils/errors";
 import { StorageService } from "./services/storageService";
 import { LoadingController } from "./utils/loading";
 import { renderForecast } from "./components/renderForecast";
+import { renderDetails } from "./components/renderDetails";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
@@ -36,13 +37,23 @@ let weather: Weather | null = null;
 let loading = false;
 let error: string | null = null;
 let searchQuery = "";
+let detailsOpen = false;
 
 function render(): void {
   app.innerHTML = `
     ${renderSearch(searchQuery)}
     ${loading ? renderLoading() : ""}
     ${error ? renderError(error) : ""}
-    ${weather && !loading ? renderCurrent(weather, settings.units) : ""}
+    ${
+      weather && !loading
+        ? `
+          <div class="weather-row ${detailsOpen ? "details-open" : ""}">
+            ${renderCurrent(weather, settings.units)}
+            ${detailsOpen ? renderDetails(weather, settings.units) : ""}
+          </div>
+        `
+        : ""
+    }
     ${weather && !loading ? renderForecast(weather.daily, settings.units) : ""}
   `;
 }
@@ -62,6 +73,7 @@ async function loadWeather(city: City): Promise<void> {
 
 async function handleSearch(query: string): Promise<void> {
   searchQuery = query;
+  detailsOpen = false;
   loadingController.begin();
   error = null;
   weather = null;
@@ -105,6 +117,10 @@ function handleClick(e: Event): void {
   switch (actionEl.dataset.action) {
     case "toggle-units":
       handleToggleUnits();
+      break;
+    case "toggle-details":
+      detailsOpen = !detailsOpen;
+      render();
       break;
   }
 }

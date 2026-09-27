@@ -57,10 +57,22 @@ body {
 
 #app {
   width: 100%;
-  max-width: 26rem;
+  max-width: 44rem;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 1.25rem;
+  transition: max-width 0.3s ease;
+}
+
+#app.details-open {
+  max-width: 44rem;
+}
+
+.search-bar,
+.forecast {
+  width: 100%;
+  max-width: 26rem;
 }
 
 .loading,
@@ -92,8 +104,10 @@ body {
   align-items: center;
   gap: 0.5rem;
   padding: 0.4rem 0.4rem 0.4rem 1rem;
-  position: relative;
-  z-index: 1;
+  width: 100%;
+  max-width: 26rem;
+  margin-inline: auto;
+  align-self: center;
 }
 
 .search-input {
@@ -105,6 +119,9 @@ body {
   font-size: 0.875rem;
   font-family: inherit;
   outline: none;
+  padding: 0;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .search-input::placeholder {
@@ -139,19 +156,6 @@ body {
 
 .search-btn:active {
   transform: scale(0.95);
-}
-
-.current-card {
-  padding: 2rem 1.5rem;
-  text-align: center;
-  color: var(--text-primary);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  max-width: 20rem;
-  width: 100%;
-  align-self: center;
-  position: relative;
 }
 
 .unit-toggle {
@@ -340,6 +344,90 @@ body {
 .forecast-low {
   font-size: 0.75rem;
   opacity: 0.5;
+}
+
+.weather-row {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: stretch;
+  width: 100%;
+  max-width: 44rem;
+  margin-inline: auto;
+}
+
+.current-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 20rem;
+  width: 100%;
+  align-self: center;
+  position: relative;
+}
+
+.current-card:hover {
+  transform: translateY(-2px);
+}
+
+.current-card,
+.details-card {
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: 21rem;
+}
+
+.details-card {
+  flex: 1 1 0;
+  padding: 1.5rem 1rem;
+}
+
+.details-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+}
+
+.details-row dt {
+  opacity: 0.65;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.details-row dd {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .weather-row {
+    flex-direction: column;
+  }
+
+  .current-card {
+    max-width: 100%;
+  }
 }
 
 @keyframes card-enter {

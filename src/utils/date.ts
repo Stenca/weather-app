@@ -20,3 +20,10 @@ export function formatDate(date: Date): string {
 export function formatDayShort(date: Date): string {
   return new Intl.DateTimeFormat("en-gb", { weekday: "short" }).format(date);
 }
+
+export function formatTime(date: Date): string {
+  return new Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(date);
+}
