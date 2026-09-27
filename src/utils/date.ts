@@ -16,3 +16,7 @@ export function formatDate(date: Date): string {
     year: "numeric",
   }).format(date);
 }
+
+export function formatDayShort(date: Date): string {
+  return new Intl.DateTimeFormat("en-gb", { weekday: "short" }).format(date);
+}

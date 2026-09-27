@@ -9,6 +9,7 @@ import { renderError } from "./components/renderError";
 import { getErrorMessage } from "./utils/errors";
 import { StorageService } from "./services/storageService";
 import { LoadingController } from "./utils/loading";
+import { renderForecast } from "./components/renderForecast";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
@@ -42,6 +43,7 @@ function render(): void {
     ${loading ? renderLoading() : ""}
     ${error ? renderError(error) : ""}
     ${weather && !loading ? renderCurrent(weather, settings.units) : ""}
+    ${weather && !loading ? renderForecast(weather.daily, settings.units) : ""}
   `;
 }
 
