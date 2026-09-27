@@ -7,7 +7,7 @@ import { renderTemp } from "./renderTemp";
 export function renderForecast(daily: DailyForecast[], units: Units): string {
   if (daily.length === 0) return "";
 
-  const days = daily.slice(0, 7);
+  const days = daily.slice(1, 8);
 
   return `
     <div class="forecast glass">

@@ -82,7 +82,7 @@ export class WeatherService {
         "sunset",
       ].join(","),
       timezone: "auto",
-      forecast_days: "7",
+      forecast_days: "8",
     });
 
     const res = await fetch(`${FORECAST_URL}?${params}`);
