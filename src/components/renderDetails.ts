@@ -1,69 +1,69 @@
-import type { Units } from "../models/settings";
 import type { Weather } from "../models/weather";
-import { formatTime } from "../utils/date";
+import type { Units } from "../models/settings";
 import { kmhToMph, mmToInches } from "../utils/units";
+import { formatTime } from "../utils/date";
 
-export function renderDetails(weather: Weather, units: Units): string {
+export function renderDetails(
+  weather: Weather,
+  units: Units,
+  animateIn = false,
+): string {
   const { current, daily } = weather;
   const today = daily[0];
 
   const windValue = Math.round(
     units === "metric" ? current.windSpeed : kmhToMph(current.windSpeed),
   );
-
   const windUnit = units === "metric" ? "km/h" : "mph";
 
   const precipValue =
     units === "metric"
       ? current.precipitation.toFixed(1)
       : mmToInches(current.precipitation).toFixed(2);
-
   const precipUnit = units === "metric" ? "mm" : "in";
 
   return `
-    <div class="details-card glass">
-      <h2 class="details-title">Details</h2>
-
-      <dl class="details-list">
-        <div class="details-row">
-          <dt>Wind direction</dt>
-          <dd>${current.windDirection}°</dd>
+    <div class="details-card glass${animateIn ? " entering" : ""}">
+      <div class="current-details">
+        <div class="detail">
+          <span class="detail-label">Wind dir.</span>
+          <span class="detail-value">${current.windDirection}°</span>
         </div>
-        <div class="details-row">
-          <dt>Wind speed</dt>
-          <dd>${windValue} ${windUnit}</dd>
+        <div class="detail">
+          <span class="detail-label">Wind speed</span>
+          <span class="detail-value">${windValue} ${windUnit}</span>
         </div>
-        <div class="details-row">
-          <dt>Precipitation</dt>
-          <dd>${precipValue} ${precipUnit}</dd>
+        <div class="detail">
+          <span class="detail-label">Precip.</span>
+          <span class="detail-value">${precipValue} ${precipUnit}</span>
         </div>
-        <div class="details-row">
-          <dt>Cloud cover</dt>
-          <dd>${current.cloudCover}%</dd>
+        <div class="detail">
+          <span class="detail-label">Clouds</span>
+          <span class="detail-value">${current.cloudCover}%</span>
         </div>
         ${
           today
             ? `
-              <div class="details-row">
-                <dt>Sunrise</dt>
-                <dd>${formatTime(today.sunrise)}</dd>
+              <div class="detail">
+                <span class="detail-label">Sunrise</span>
+                <span class="detail-value">${formatTime(today.sunrise)}</span>
               </div>
-              <div class="details-row">
-                <dt>Sunset</dt>
-                <dd>${formatTime(today.sunset)}</dd>
+              <div class="detail">
+                <span class="detail-label">Sunset</span>
+                <span class="detail-value">${formatTime(today.sunset)}</span>
               </div>
-              <div class="details-row">
-                <dt>UV index</dt>
-                <dd>${today.uvIndexMax}</dd>
+              <div class="detail">
+                <span class="detail-label">UV index</span>
+                <span class="detail-value">${today.uvIndexMax}</span>
               </div>
-              <div class="details-row">
-                <dt>Rain chance</dt>
-                <dd>${today.precipitationProbability}%</dd>
+              <div class="detail">
+                <span class="detail-label">Rain</span>
+                <span class="detail-value">${today.precipitationProbability}%</span>
               </div>
             `
             : ""
         }
-      </dl>
+      </div>
     </div>
   `;
 }

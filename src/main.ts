@@ -38,8 +38,10 @@ let loading = false;
 let error: string | null = null;
 let searchQuery = "";
 let detailsOpen = false;
+let detailsJustOpened = false;
 
 function render(): void {
+  app.classList.toggle("details-open", detailsOpen);
   app.innerHTML = `
     ${renderSearch(searchQuery)}
     ${loading ? renderLoading() : ""}
@@ -49,13 +51,14 @@ function render(): void {
         ? `
           <div class="weather-row ${detailsOpen ? "details-open" : ""}">
             ${renderCurrent(weather, settings.units)}
-            ${detailsOpen ? renderDetails(weather, settings.units) : ""}
+            ${detailsOpen ? renderDetails(weather, settings.units, detailsJustOpened) : ""}
           </div>
         `
         : ""
     }
     ${weather && !loading ? renderForecast(weather.daily, settings.units) : ""}
   `;
+  detailsJustOpened = false;
 }
 
 async function loadWeather(city: City): Promise<void> {
@@ -119,8 +122,7 @@ function handleClick(e: Event): void {
       handleToggleUnits();
       break;
     case "toggle-details":
-      detailsOpen = !detailsOpen;
-      render();
+      handleToggleDetails();
       break;
   }
 }
@@ -128,6 +130,12 @@ function handleClick(e: Event): void {
 function handleToggleUnits(): void {
   const next = settings.units === "metric" ? "imperial" : "metric";
   settings = settingsService.update({ units: next });
+  render();
+}
+
+function handleToggleDetails(): void {
+  detailsOpen = !detailsOpen;
+  if (detailsOpen) detailsJustOpened = true;
   render();
 }
 
