@@ -1,3 +1,4 @@
+import { Cloud, Droplet, Thermometer, Wind } from "lucide-static";
 import type { Units } from "../models/settings";
 import type { Weather } from "../models/weather";
 import { formatDate, formatDay } from "../utils/date";
@@ -29,14 +30,17 @@ export function renderCurrent(
         <div class="current-label">${describeWeather(current.weatherCode)}</div>
         <div class="current-details">
         <div class="detail">
+          <span class="detail-icon">${Thermometer}</span>
           <span class="detail-label">Feels like</span>
           <span class="detail-value">${renderTemp(current.apparentTemperature, units)}</span>
         </div>
         <div class="detail">
+          <span class="detail-icon">${Droplet}</span>
           <span class="detail-label">Humidity</span>
           <span class="detail-value">${current.humidity}%</span>
         </div>
         <div class="detail">
+          <span class="detail-icon">${Wind}</span>
           <span class="detail-label">Wind</span>
             <span class="detail-value">
                 ${Math.round(units === "metric" ? current.windSpeed : kmhToMph(current.windSpeed))}
@@ -44,6 +48,7 @@ export function renderCurrent(
             </span>
         </div>
         <div class="detail">
+                  <span class="detail-icon">${Cloud}</span>
           <span class="detail-label">Clouds</span>
           <span class="detail-value">${current.cloudCover}%</span>
         </div>

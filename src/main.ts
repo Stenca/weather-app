@@ -38,7 +38,7 @@ let loading = false;
 let error: string | null = null;
 let searchQuery = "";
 let detailsOpen = false;
-let detailsJustOpened = false;
+let detailsJustToggled = false;
 let weatherJustLoaded = false;
 
 function render(): void {
@@ -52,15 +52,14 @@ function render(): void {
         ? `
           <div class="weather-row ${detailsOpen ? "details-open" : ""}">
             ${renderCurrent(weather, settings.units, weatherJustLoaded)}
-            ${detailsOpen ? renderDetails(weather, settings.units, detailsJustOpened) : ""}
+            ${detailsOpen ? renderDetails(weather, settings.units, detailsJustToggled) : ""}
           </div>
         `
         : ""
     }
     ${weather && !loading ? renderForecast(weather.daily, settings.units, weatherJustLoaded) : ""}
   `;
-  detailsJustOpened = false;
-  weatherJustLoaded = false;
+  detailsJustToggled = false;
 }
 
 async function loadWeather(city: City): Promise<void> {
@@ -138,7 +137,7 @@ function handleToggleUnits(): void {
 
 function handleToggleDetails(): void {
   detailsOpen = !detailsOpen;
-  if (detailsOpen) detailsJustOpened = true;
+  detailsJustToggled = true;
   render();
 }
 
