@@ -22,7 +22,7 @@ export function renderCurrent(
         >${units === "metric" ? "°C" : "°F"}</button>
         <div class="current-icon">${weatherIcon(current.weatherCode)}</div>
         <div class="current-city">
-            ${escapeHtml(city.name)}, ${escapeHtml(city.country)}
+            ${escapeHtml(city.name)}${city.country ? `, ${escapeHtml(city.country)}` : ""}
         </div>
         <div class="current-temp">${renderTemp(current.temperature, units)}</div>
         <div class="current-day">${formatDay(current.time)}</div>

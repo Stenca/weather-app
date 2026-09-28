@@ -11,12 +11,14 @@ import { StorageService } from "./services/storageService";
 import { LoadingController } from "./utils/loading";
 import { renderForecast } from "./components/renderForecast";
 import { renderDetails } from "./components/renderDetails";
+import { GeolocationService } from "./services/geolocationService";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
 const weatherService = new WeatherService();
 const settingsService = new SettingsService();
 const storageService = new StorageService();
+const geolocationService = new GeolocationService();
 
 const DEFAULT_CITY: City = {
   id: 0,
@@ -126,6 +128,9 @@ function handleClick(e: Event): void {
     case "toggle-details":
       handleToggleDetails();
       break;
+    case "use-location":
+      handleUseLocation();
+      break;
   }
 }
 
@@ -139,6 +144,24 @@ function handleToggleDetails(): void {
   detailsOpen = !detailsOpen;
   detailsJustToggled = true;
   render();
+}
+
+async function handleUseLocation(): Promise<void> {
+  try {
+    const coords = await geolocationService.getCurrentPosition();
+    const city: City = {
+      id: 0,
+      name: "Your location",
+      country: "",
+      latitude: coords.latitude,
+      longitude: coords.longitude,
+    };
+    storageService.saveCity(city);
+    await loadWeather(city);
+  } catch (err) {
+    error = getErrorMessage(err);
+    render();
+  }
 }
 
 function setupEventListeners() {

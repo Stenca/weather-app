@@ -59,16 +59,6 @@ export function renderDetails(
           today
             ? `
               <div class="detail">
-                <span class="detail-icon">${Sunrise}</span>
-                <span class="detail-label">Sunrise</span>
-                <span class="detail-value">${formatTime(today.sunrise)}</span>
-              </div>
-              <div class="detail">
-                <span class="detail-icon">${Sunset}</span>
-                <span class="detail-label">Sunset</span>
-                <span class="detail-value">${formatTime(today.sunset)}</span>
-              </div>
-              <div class="detail">
                 <span class="detail-icon">${Sun}</span>
                 <span class="detail-label">UV index</span>
                 <span class="detail-value">${today.uvIndexMax}</span>
@@ -77,6 +67,16 @@ export function renderDetails(
                 <span class="detail-icon">${Umbrella}</span>
                 <span class="detail-label">Rain</span>
                 <span class="detail-value">${today.precipitationProbability}%</span>
+              </div>
+              <div class="detail">
+                <span class="detail-icon">${Sunrise}</span>
+                <span class="detail-label">Sunrise</span>
+                <span class="detail-value">${formatTime(today.sunrise)}</span>
+              </div>
+              <div class="detail">
+                <span class="detail-icon">${Sunset}</span>
+                <span class="detail-label">Sunset</span>
+                <span class="detail-value">${formatTime(today.sunset)}</span>
               </div>
             `
             : ""

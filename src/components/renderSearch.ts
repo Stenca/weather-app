@@ -1,8 +1,9 @@
+import { MapPin } from "lucide-static";
 import { escapeHtml } from "../utils/dom";
 
 export function renderSearch(query = ""): string {
   return `
-        <form class="search-bar glass" data-action="search">
+        <form class="search-bar glass">
             <input
                 type="search"
                 class="search-input"
@@ -12,6 +13,12 @@ export function renderSearch(query = ""): string {
                 autocomplete="off"
                 required
             />
+            <button 
+            type"button" 
+            class="location-btn" 
+            data-action="use-location">
+                  ${MapPin}
+            </button>
             <button
                 type="submit"
                 class="search-btn"

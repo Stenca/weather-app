@@ -148,6 +148,30 @@ body {
   transform: scale(0.95);
 }
 
+.location-btn {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 50%;
+  border: none;
+  background: var(--overlay-medium);
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.location-btn:hover {
+  background: var(--overlay-strong);
+}
+
+.location-btn svg {
+  width: 1rem;
+  height: 1rem;
+}
+
 .weather-row {
   display: flex;
   gap: 1rem;
