@@ -6,11 +6,15 @@ import { kmhToMph } from "../utils/units";
 import { describeWeather, weatherIcon } from "../utils/weatherIcons";
 import { renderTemp } from "./renderTemp";
 
-export function renderCurrent(weather: Weather, units: Units): string {
+export function renderCurrent(
+  weather: Weather,
+  units: Units,
+  animateIn = false,
+): string {
   const { current, city } = weather;
 
   return `
-    <div class="current-card glass" data-action="toggle-details">
+    <div class="current-card glass${animateIn ? " entering" : ""}" data-action="toggle-details">
         <button
             class="unit-toggle"
             data-action="toggle-units"

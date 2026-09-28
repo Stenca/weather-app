@@ -4,13 +4,17 @@ import { formatDayShort } from "../utils/date";
 import { describeWeather, weatherIcon } from "../utils/weatherIcons";
 import { renderTemp } from "./renderTemp";
 
-export function renderForecast(daily: DailyForecast[], units: Units): string {
+export function renderForecast(
+  daily: DailyForecast[],
+  units: Units,
+  animateIn = false,
+): string {
   if (daily.length === 0) return "";
 
   const days = daily.slice(1, 8);
 
   return `
-    <div class="forecast glass">
+    <div class="forecast glass${animateIn ? " entering" : ""}">
       ${days
         .map((day) => {
           const info = describeWeather(day.weatherCode);

@@ -39,6 +39,7 @@ let error: string | null = null;
 let searchQuery = "";
 let detailsOpen = false;
 let detailsJustOpened = false;
+let weatherJustLoaded = false;
 
 function render(): void {
   app.classList.toggle("details-open", detailsOpen);
@@ -50,15 +51,16 @@ function render(): void {
       weather && !loading
         ? `
           <div class="weather-row ${detailsOpen ? "details-open" : ""}">
-            ${renderCurrent(weather, settings.units)}
+            ${renderCurrent(weather, settings.units, weatherJustLoaded)}
             ${detailsOpen ? renderDetails(weather, settings.units, detailsJustOpened) : ""}
           </div>
         `
         : ""
     }
-    ${weather && !loading ? renderForecast(weather.daily, settings.units) : ""}
+    ${weather && !loading ? renderForecast(weather.daily, settings.units, weatherJustLoaded) : ""}
   `;
   detailsJustOpened = false;
+  weatherJustLoaded = false;
 }
 
 async function loadWeather(city: City): Promise<void> {
@@ -67,6 +69,7 @@ async function loadWeather(city: City): Promise<void> {
   render();
   try {
     weather = await weatherService.getWeather(city);
+    weatherJustLoaded = true;
   } catch (err) {
     error = getErrorMessage(err);
   } finally {
