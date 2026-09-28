@@ -1,7 +1,7 @@
 import type { Units } from "../models/settings";
 import type { DailyForecast } from "../models/weather";
 import { formatDayShort } from "../utils/date";
-import { describeWeather } from "../utils/weatherCodes";
+import { describeWeather, weatherIcon } from "../utils/weatherIcons";
 import { renderTemp } from "./renderTemp";
 
 export function renderForecast(daily: DailyForecast[], units: Units): string {
@@ -21,7 +21,7 @@ export function renderForecast(daily: DailyForecast[], units: Units): string {
                     ${formatDayShort(day.date)}
                 </span>
                 <span class="forecast-icon">
-                    ${info.icon}
+                    ${weatherIcon(day.weatherCode)}
                 </span>
                 <span class="forecast-high">
                     ${renderTemp(day.tempMax, units)}

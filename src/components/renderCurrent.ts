@@ -3,12 +3,11 @@ import type { Weather } from "../models/weather";
 import { formatDate, formatDay } from "../utils/date";
 import { escapeHtml } from "../utils/dom";
 import { kmhToMph } from "../utils/units";
-import { describeWeather } from "../utils/weatherCodes";
+import { describeWeather, weatherIcon } from "../utils/weatherIcons";
 import { renderTemp } from "./renderTemp";
 
 export function renderCurrent(weather: Weather, units: Units): string {
   const { current, city } = weather;
-  const info = describeWeather(current.weatherCode);
 
   return `
     <div class="current-card glass" data-action="toggle-details">
@@ -16,14 +15,14 @@ export function renderCurrent(weather: Weather, units: Units): string {
             class="unit-toggle"
             data-action="toggle-units"
         >${units === "metric" ? "°C" : "°F"}</button>
-        <div class="current-icon">${info.icon}</div>
+        <div class="current-icon">${weatherIcon(current.weatherCode)}</div>
         <div class="current-city">
             ${escapeHtml(city.name)}, ${escapeHtml(city.country)}
         </div>
         <div class="current-temp">${renderTemp(current.temperature, units)}</div>
         <div class="current-day">${formatDay(current.time)}</div>
         <div class="current-date">${formatDate(current.time)}</div>
-        <div class="current-label">${info.label}</div>
+        <div class="current-label">${describeWeather(current.weatherCode)}</div>
         <div class="current-details">
         <div class="detail">
           <span class="detail-label">Feels like</span>

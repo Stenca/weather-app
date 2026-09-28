@@ -186,9 +186,10 @@ body {
 }
 
 .current-icon {
-  font-size: 9rem;
+  font-size: 7rem;
   line-height: 1;
-  margin-bottom: -2rem;
+  color: var(--text-primary);
+  margin-bottom: -0.5rem;
 }
 
 .current-city {
@@ -334,6 +335,7 @@ body {
   font-size: 1.25rem;
   line-height: 1;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .forecast-high {
@@ -448,4 +450,16 @@ body {
 .loading,
 .error {
   animation: card-enter 0.4s ease both;
+}
+
+.lucide-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lucide-icon svg {
+  width: 1em;
+  height: 1em;
+  display: block;
 }
