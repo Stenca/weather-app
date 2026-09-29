@@ -2,7 +2,6 @@ import {
   Compass,
   Wind,
   Droplets,
-  Cloud,
   Sunrise,
   Sunset,
   Sun,
