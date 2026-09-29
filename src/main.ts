@@ -64,7 +64,7 @@ function render(): void {
       weather && !loading
         ? `
           <div class="weather-row">
-            ${renderCurrent(weather, settings.units, weatherJustLoaded)}
+            ${renderCurrent(weather, settings.units, detailsJustToggled || weatherJustLoaded)}
             ${detailsOpen ? renderDetails(weather, settings.units, detailsJustToggled) : ""}
           </div>
         `

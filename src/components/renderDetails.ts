@@ -50,11 +50,6 @@ export function renderDetails(
           <span class="detail-label">Precip.</span>
           <span class="detail-value">${precipValue} ${precipUnit}</span>
         </div>
-        <div class="detail">
-          <span class="detail-icon">${Cloud}</span>
-          <span class="detail-label">Clouds</span>
-          <span class="detail-value">${current.cloudCover}%</span>
-        </div>
         ${
           today
             ? `
