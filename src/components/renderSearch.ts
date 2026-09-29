@@ -1,4 +1,4 @@
-import { MapPin } from "lucide-static";
+import { MapPin, Search } from "lucide-static";
 import { escapeHtml } from "../utils/dom";
 
 export function renderSearch(query = ""): string {
@@ -14,7 +14,7 @@ export function renderSearch(query = ""): string {
                 required
             />
             <button 
-            type"button" 
+            type="button" 
             class="location-btn" 
             data-action="use-location">
                   ${MapPin}
@@ -22,9 +22,8 @@ export function renderSearch(query = ""): string {
             <button
                 type="submit"
                 class="search-btn"
-                data-action="search"
             >
-                🔍
+                ${Search}
             </button>
         </form>
     `;

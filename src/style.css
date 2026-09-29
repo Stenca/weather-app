@@ -124,6 +124,7 @@ body {
   appearance: none;
 }
 
+.location-btn,
 .search-btn {
   width: 2.25rem;
   height: 2.25rem;
@@ -131,7 +132,6 @@ body {
   border: none;
   background: var(--overlay-medium);
   color: var(--text-primary);
-  font-size: 0.875rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -140,36 +140,60 @@ body {
   transition: background 0.2s;
 }
 
+.location-btn:hover,
 .search-btn:hover {
   background: var(--overlay-strong);
 }
 
-.search-btn:active {
-  transform: scale(0.95);
-}
-
-.location-btn {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 50%;
-  border: none;
-  background: var(--overlay-medium);
-  color: var(--text-primary);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: background 0.2s;
-}
-
-.location-btn:hover {
-  background: var(--overlay-strong);
-}
-
-.location-btn svg {
+.location-btn svg,
+.search-btn svg {
   width: 1rem;
   height: 1rem;
+}
+
+.city-results {
+  list-style: none;
+  padding: 0.5rem;
+  width: 100%;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  animation: card-enter 0.2s ease both;
+}
+
+.city-results li {
+  list-style: none;
+}
+
+.city-result {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.city-result:hover {
+  background: var(--overlay-light);
+}
+
+.city-result-name {
+  font-size: 0.9375rem;
+  font-weight: 500;
+}
+
+.city-result-region {
+  font-size: 0.75rem;
+  opacity: 0.6;
 }
 
 .weather-row {

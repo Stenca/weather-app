@@ -12,6 +12,7 @@ import { LoadingController } from "./utils/loading";
 import { renderForecast } from "./components/renderForecast";
 import { renderDetails } from "./components/renderDetails";
 import { GeolocationService } from "./services/geolocationService";
+import { renderCityResults } from "./components/renderCityResults";
 
 const app = document.getElementById("app") as HTMLDivElement;
 
@@ -20,6 +21,7 @@ const settingsService = new SettingsService();
 const storageService = new StorageService();
 const geolocationService = new GeolocationService();
 
+const SEARCH_DEBOUNCE = 300;
 const DEFAULT_CITY: City = {
   id: 0,
   name: "Paris",
@@ -27,6 +29,7 @@ const DEFAULT_CITY: City = {
   longitude: 2.3522,
   country: "France",
 };
+
 const initialCity = storageService.loadCity() ?? DEFAULT_CITY;
 
 const loadingController = new LoadingController((value) => {
@@ -42,17 +45,25 @@ let searchQuery = "";
 let detailsOpen = false;
 let detailsJustToggled = false;
 let weatherJustLoaded = false;
+let cityResults: City[] = [];
+let searchTimeout: number | null = null;
 
 function render(): void {
   app.classList.toggle("details-open", detailsOpen);
+
+  const active = document.activeElement as HTMLInputElement | null;
+  const wasSearchFocused = active?.classList.contains("search-input") ?? false;
+  const cursorPos = wasSearchFocused ? (active?.selectionStart ?? null) : null;
+
   app.innerHTML = `
     ${renderSearch(searchQuery)}
+    ${cityResults.length > 0 ? renderCityResults(cityResults) : ""}
     ${loading ? renderLoading() : ""}
     ${error ? renderError(error) : ""}
     ${
       weather && !loading
         ? `
-          <div class="weather-row ${detailsOpen ? "details-open" : ""}">
+          <div class="weather-row">
             ${renderCurrent(weather, settings.units, weatherJustLoaded)}
             ${detailsOpen ? renderDetails(weather, settings.units, detailsJustToggled) : ""}
           </div>
@@ -61,13 +72,34 @@ function render(): void {
     }
     ${weather && !loading ? renderForecast(weather.daily, settings.units, weatherJustLoaded) : ""}
   `;
+
+  if (wasSearchFocused) {
+    const input = document.querySelector<HTMLInputElement>(".search-input");
+    if (input) {
+      input.focus();
+      if (cursorPos !== null) input.setSelectionRange(cursorPos, cursorPos);
+    }
+  }
+
   detailsJustToggled = false;
+  weatherJustLoaded = false;
+}
+
+async function fetchCities(query: string): Promise<City[]> {
+  try {
+    return await weatherService.searchCities(query);
+  } catch (err) {
+    error = getErrorMessage(err);
+    render();
+    return [];
+  }
 }
 
 async function loadWeather(city: City): Promise<void> {
   loadingController.begin();
   error = null;
   render();
+
   try {
     weather = await weatherService.getWeather(city);
     weatherJustLoaded = true;
@@ -78,32 +110,37 @@ async function loadWeather(city: City): Promise<void> {
   }
 }
 
-async function handleSearch(query: string): Promise<void> {
+function handleSelectCity(city: City): void {
+  cityResults = [];
+  searchQuery = city.name;
+  storageService.saveCity(city);
+  loadWeather(city);
+}
+
+function handleSearchInput(e: Event): void {
+  const target = e.target as HTMLInputElement;
+  if (!target.classList.contains("search-input")) return;
+
+  const query = target.value.trim();
   searchQuery = query;
-  detailsOpen = false;
-  loadingController.begin();
-  error = null;
-  weather = null;
-  render();
 
-  let cities: City[];
-  try {
-    cities = await weatherService.searchCities(query);
-  } catch (err) {
-    error = getErrorMessage(err);
-    loadingController.end();
-    render();
+  if (searchTimeout !== null) clearTimeout(searchTimeout);
+
+  if (query.length < 2) {
+    if (cityResults.length > 0) {
+      cityResults = [];
+      render();
+    }
     return;
   }
 
-  if (cities.length === 0) {
-    error = `No city found for "${query}"`;
-    loadingController.end();
+  searchTimeout = window.setTimeout(async () => {
+    const cities = await fetchCities(query);
+    if (query !== searchQuery) return;
+    cityResults = cities;
+    error = null;
     render();
-    return;
-  }
-  storageService.saveCity(cities[0]);
-  await loadWeather(cities[0]);
+  }, SEARCH_DEBOUNCE);
 }
 
 function handleSubmit(e: Event): void {
@@ -111,9 +148,24 @@ function handleSubmit(e: Event): void {
   if (!form.classList.contains("search-bar")) return;
 
   e.preventDefault();
+
+  if (cityResults.length > 0) {
+    handleSelectCity(cityResults[0]);
+    return;
+  }
+
   const input = form.querySelector<HTMLInputElement>(".search-input");
   const query = input?.value.trim();
-  if (query) handleSearch(query);
+  if (!query || query.length < 2) return;
+
+  fetchCities(query).then((cities) => {
+    if (cities.length > 0) {
+      handleSelectCity(cities[0]);
+    } else {
+      error = `No city found for "${query}"`;
+      render();
+    }
+  });
 }
 
 function handleClick(e: Event): void {
@@ -131,6 +183,12 @@ function handleClick(e: Event): void {
     case "use-location":
       handleUseLocation();
       break;
+    case "select-city": {
+      const cityId = actionEl.dataset.cityId;
+      const city = cityResults.find((c) => String(c.id) === cityId);
+      if (city) handleSelectCity(city);
+      break;
+    }
   }
 }
 
@@ -149,6 +207,9 @@ function handleToggleDetails(): void {
 async function handleUseLocation(): Promise<void> {
   try {
     const coords = await geolocationService.getCurrentPosition();
+    searchQuery = "";
+    cityResults = [];
+
     const city: City = {
       id: 0,
       name: "Your location",
@@ -156,6 +217,7 @@ async function handleUseLocation(): Promise<void> {
       latitude: coords.latitude,
       longitude: coords.longitude,
     };
+
     storageService.saveCity(city);
     await loadWeather(city);
   } catch (err) {
@@ -164,9 +226,10 @@ async function handleUseLocation(): Promise<void> {
   }
 }
 
-function setupEventListeners() {
+function setupEventListeners(): void {
   app.addEventListener("submit", handleSubmit);
   app.addEventListener("click", handleClick);
+  app.addEventListener("input", handleSearchInput);
 }
 
 setupEventListeners();
